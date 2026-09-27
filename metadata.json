@@ -1,0 +1,7 @@
+{
+  "name": "CoffeeOrder - 단체 커피 주문 취합 & 더치페이",
+  "description": "회사, 모임, 동아리에서 커피 주문을 1초 만에 취합하고 개인별 금액과 더치페이를 자동 계산해주는 모바일 주문 도우미",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
