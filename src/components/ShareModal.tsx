@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   X,
   Link2,
@@ -29,6 +29,7 @@ import {
 import QRCode from 'qrcode';
 import {
   createShareLink,
+  encodeOrderToHash,
   formatKakaoShareText,
   formatNudgeKakaoText,
   registerExpectedMembers,
@@ -65,9 +66,17 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   onUpdateTargetMemberCount,
 }) => {
   const [activeTab, setActiveTab] = useState<'share' | 'restriction' | 'group'>('share');
-  const [shareUrl, setShareUrl] = useState<string>('');
+
+  // Immediately compute instantaneous fallback share URL so the link is never empty
+  const initialFallbackUrl = useMemo(() => {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    if (order.roomId) return `${baseUrl}?room=${order.roomId}`;
+    return `${baseUrl}#order=${encodeOrderToHash(order)}`;
+  }, [order]);
+
+  const [shareUrl, setShareUrl] = useState<string>(initialFallbackUrl);
   const [roomId, setRoomId] = useState<string>(order.roomId || '');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(!order.roomId);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<boolean>(false);
   const [copiedNudge, setCopiedNudge] = useState<boolean>(false);
@@ -99,15 +108,31 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   );
   const [menuSearchQuery, setMenuSearchQuery] = useState<string>('');
 
+  // Keep callback reference stable across parent re-renders to prevent aborting
+  const onRoomCreatedRef = useRef(onRoomCreated);
+  onRoomCreatedRef.current = onRoomCreated;
+
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const hasGeneratedRef = useRef(false);
+
   // Generate or sync link
   useEffect(() => {
-    let isMounted = true;
+    if (hasGeneratedRef.current) return;
+    hasGeneratedRef.current = true;
 
     async function generateLink() {
       setIsLoading(true);
       try {
         const orderToShare: ShareableOrder = {
           ...order,
+          roomId: roomId || order.roomId,
           menuRestriction: restrictionEnabled
             ? {
                 enabled: true,
@@ -122,11 +147,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         };
 
         const result = await createShareLink(orderToShare);
-        if (isMounted) {
+        if (isMountedRef.current) {
           setShareUrl(result.shareUrl);
           if (result.roomId) {
             setRoomId(result.roomId);
-            onRoomCreated?.(result.roomId);
+            onRoomCreatedRef.current?.(result.roomId);
           }
 
           // Generate QR code
@@ -139,7 +164,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 light: '#ffffff',
               },
             });
-            if (isMounted) {
+            if (isMountedRef.current) {
               setQrDataUrl(qr);
             }
           } catch (qrErr) {
@@ -149,15 +174,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({
       } catch (err) {
         console.error('Failed to create share link:', err);
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (isMountedRef.current) {
+          setIsLoading(false);
+        }
       }
     }
 
     generateLink();
-    return () => {
-      isMounted = false;
-    };
-  }, [order, onRoomCreated]);
+  }, [order.id]);
 
   // Keep members updated
   useEffect(() => {

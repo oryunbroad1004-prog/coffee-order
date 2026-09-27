@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Coffee, History, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Coffee, History, RefreshCw, Share2, ShoppingBag } from 'lucide-react';
 import { Cafe } from '../types';
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onGoHome: () => void;
   onOpenHistory: () => void;
   onOpenSummary: () => void;
+  onOpenShare?: () => void;
   activeRoomId?: string | null;
 }
 
@@ -21,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   onGoHome,
   onOpenHistory,
   onOpenSummary,
+  onOpenShare,
   activeRoomId,
 }) => {
   const getTitle = () => {
@@ -30,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
       case 'menu':
         return selectedCafe ? selectedCafe.name : '메뉴 선택';
       case 'summary':
-        return '실시간 주문 취합';
+        return '주문서 & 링크 공유';
       case 'dutch':
         return '더치페이 계산';
       case 'history':
@@ -110,15 +112,29 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           {activeScreen === 'menu' && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
+              {onOpenShare && (
+                <button
+                  onClick={onOpenShare}
+                  type="button"
+                  className="h-9 px-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-extrabold flex items-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                  title="카톡 단톡방에 주문하기 링크 공유"
+                >
+                  <Share2 className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>주문 링크 공유</span>
+                </button>
+              )}
+
               <button
                 onClick={onOpenSummary}
                 type="button"
-                className="relative h-9 px-3 rounded-xl bg-stone-900 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs active:scale-95 transition-transform"
+                className="relative h-9 px-2.5 rounded-xl bg-stone-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs active:scale-95 transition-transform"
+                title="장바구니 및 주문서 보기"
               >
+                <ShoppingBag className="w-3.5 h-3.5" />
                 <span>장바구니</span>
                 {itemCount > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-amber-400 text-stone-950 text-[11px] font-black flex items-center justify-center">
+                  <span className="w-4.5 h-4.5 rounded-full bg-amber-400 text-stone-950 text-[10px] font-black flex items-center justify-center">
                     {itemCount}
                   </span>
                 )}

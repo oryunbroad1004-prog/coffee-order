@@ -12,6 +12,7 @@ import {
   Star,
   Lock,
   Filter,
+  Share2,
 } from 'lucide-react';
 import { Cafe, CategoryType, Menu, MenuRestriction, OrderItem, OrderMember } from '../types';
 
@@ -28,6 +29,7 @@ interface MenuCatalogProps {
   onAddNewMember: (name: string) => void;
   onOpenOptionModal: (menu: Menu) => void;
   onOpenSummary: () => void;
+  onOpenShare?: () => void;
   onOpenOcrModal: () => void;
   onOpenAddMenuModal: (menu?: Menu | null) => void;
   onDeleteMenu: (menuId: string) => void;
@@ -48,6 +50,7 @@ export const MenuCatalog: React.FC<MenuCatalogProps> = ({
   onAddNewMember,
   onOpenOptionModal,
   onOpenSummary,
+  onOpenShare,
   onOpenOcrModal,
   onOpenAddMenuModal,
   onDeleteMenu,
@@ -250,7 +253,34 @@ export const MenuCatalog: React.FC<MenuCatalogProps> = ({
         </div>
       </div>
 
-        {/* Member Bar (Who are you ordering for?) */}
+      {/* Direct Order Share Link Banner */}
+      {onOpenShare && (
+        <div className="mb-4 p-3.5 bg-gradient-to-r from-amber-50 via-orange-50/70 to-amber-100/60 rounded-2xl border border-amber-300/90 shadow-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 shadow-2xs">
+              <Share2 className="w-4.5 h-4.5 stroke-[2.2]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-black text-amber-950 truncate">
+                주문하기 링크 공유 (카톡 단톡방)
+              </p>
+              <p className="text-[11px] text-amber-800 truncate">
+                동료들에게 링크를 보내서 각자 메뉴를 고르게 하세요
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onOpenShare}
+            type="button"
+            className="h-8.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shrink-0 shadow-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>링크 공유</span>
+          </button>
+        </div>
+      )}
+
+      {/* Member Bar (Who are you ordering for?) */}
         <div className="bg-stone-50 rounded-2xl p-3.5 border border-stone-200/80 mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-stone-700">
@@ -560,33 +590,72 @@ export const MenuCatalog: React.FC<MenuCatalogProps> = ({
         )}
       </div>
 
-      {/* Floating Bottom Cart Bar */}
-      {totalItemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-stone-100 via-stone-100/90 to-transparent">
-          <div className="max-w-md mx-auto">
-            <button
-              onClick={onOpenSummary}
-              type="button"
-              className="w-full h-13 rounded-2xl bg-stone-900 text-white flex items-center justify-between px-5 shadow-lg shadow-stone-900/20 active:scale-[0.98] transition-transform"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-amber-400 text-stone-950 text-xs font-black flex items-center justify-center">
-                  {totalItemCount}
-                </span>
-                <span className="text-xs font-bold">
-                  {members.length}명 참여 · 주문서 확인
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black font-mono tabular-nums">
-                  {totalAmount.toLocaleString()}원
-                </span>
-                <ChevronRight className="w-4 h-4 text-stone-400" />
-              </div>
-            </button>
-          </div>
+      {/* Floating Bottom Cart / Share Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-stone-100 via-stone-100/90 to-transparent">
+        <div className="max-w-md mx-auto">
+          {totalItemCount > 0 ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onOpenSummary}
+                type="button"
+                className="flex-1 h-13 rounded-2xl bg-stone-900 text-white flex items-center justify-between px-4 shadow-lg shadow-stone-900/20 active:scale-[0.98] transition-transform cursor-pointer"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-6 h-6 rounded-full bg-amber-400 text-stone-950 text-xs font-black flex items-center justify-center shrink-0">
+                    {totalItemCount}
+                  </span>
+                  <span className="text-xs font-bold truncate">
+                    {members.length}명 참여 · 장바구니
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0 ml-1">
+                  <span className="text-xs font-black font-mono tabular-nums">
+                    {totalAmount.toLocaleString()}원
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
+                </div>
+              </button>
+
+              {onOpenShare && (
+                <button
+                  onClick={onOpenShare}
+                  type="button"
+                  className="h-13 px-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-extrabold flex items-center gap-1.5 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all cursor-pointer shrink-0"
+                >
+                  <Share2 className="w-4 h-4 stroke-[2.5]" />
+                  <span>주문하기 링크 공유</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            onOpenShare && (
+              <button
+                onClick={onOpenShare}
+                type="button"
+                className="w-full h-13 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 flex items-center justify-between px-5 shadow-lg shadow-amber-500/25 active:scale-[0.98] transition-transform cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-xl bg-stone-950 text-amber-300 flex items-center justify-center shrink-0 shadow-2xs">
+                    <Share2 className="w-4 h-4 stroke-[2.5]" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs font-black leading-tight">
+                      주문하기 링크 공유
+                    </p>
+                    <p className="text-[10px] text-amber-950/80 leading-tight">
+                      단톡방에 보내서 동료들이 각자 고르게 하기
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-black bg-stone-950/10 px-2.5 py-1 rounded-xl">
+                  <span>링크 공유</span>
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </div>
+              </button>
+            )
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

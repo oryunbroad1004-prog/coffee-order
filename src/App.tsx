@@ -662,6 +662,7 @@ export default function App() {
           onGoHome={() => setActiveScreen('home')}
           onOpenHistory={() => setActiveScreen('history')}
           onOpenSummary={() => setActiveScreen('summary')}
+          onOpenShare={selectedCafe ? () => handleOpenShareFromCurrent() : undefined}
           activeRoomId={activeRoomId}
         />
 
@@ -717,6 +718,7 @@ export default function App() {
               onAddNewMember={handleAddNewMember}
               onOpenOptionModal={(menu) => setActiveMenuForOption(menu)}
               onOpenSummary={() => setActiveScreen('summary')}
+              onOpenShare={() => handleOpenShareFromCurrent()}
               onOpenOcrModal={() => setIsOcrModalOpen(true)}
               onOpenAddMenuModal={(menu) => setAddEditMenuTarget(menu || null)}
               onDeleteMenu={handleDeleteMenu}
@@ -808,9 +810,10 @@ export default function App() {
             onAddBatchMembers={handleAddBatchMembers}
             onClose={() => setShareModalOrder(null)}
             onShowToast={showToast}
-            onRoomCreated={(roomId) => {
-              setActiveRoomId(roomId);
-              showToast(`실시간 주문방(#${roomId})이 연결되었습니다! 🟢`);
+            onRoomCreated={(newRoomId) => {
+              setActiveRoomId(newRoomId);
+              setShareModalOrder((prev) => (prev ? { ...prev, roomId: newRoomId } : null));
+              showToast(`실시간 주문방(#${newRoomId})이 연결되었습니다! 🟢`);
             }}
           />
         )}

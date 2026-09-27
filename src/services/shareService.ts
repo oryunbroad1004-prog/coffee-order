@@ -93,18 +93,26 @@ export async function createOrSyncLiveRoom(data: {
   menuRestriction?: MenuRestriction;
   targetMemberCount?: number;
 }): Promise<LiveRoom> {
-  const res = await fetch('/api/rooms', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-  if (!res.ok) {
-    throw new Error('주문방 생성 실패');
+  try {
+    const res = await fetch('/api/rooms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      throw new Error('주문방 생성 실패');
+    }
+
+    const json = await res.json();
+    return json.room;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const json = await res.json();
-  return json.room;
 }
 
 /**

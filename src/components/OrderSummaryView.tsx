@@ -228,12 +228,14 @@ export const OrderSummaryView: React.FC<OrderSummaryViewProps> = ({
           )}
         </div>
       ) : (
-        <div className="mb-3.5 p-3.5 bg-amber-50 rounded-2xl border border-amber-200/90 shadow-xs flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0 mr-2">
-            <Share2 className="w-4 h-4 text-amber-700 shrink-0" />
+        <div className="mb-3.5 p-3.5 bg-gradient-to-r from-amber-50 via-orange-50/60 to-amber-100/50 rounded-2xl border border-amber-300 shadow-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 shadow-2xs">
+              <Share2 className="w-4 h-4 stroke-[2.2]" />
+            </div>
             <div>
-              <p className="text-xs font-bold text-amber-950 leading-tight">
-                동료들에게 주문 링크를 보내보세요!
+              <p className="text-xs font-black text-amber-950 leading-tight">
+                단톡방에 주문하기 링크를 공유하세요!
               </p>
               <p className="text-[11px] text-amber-800 leading-tight mt-0.5">
                 링크를 주면 동료들이 휴대폰에서 직접 고르고, 여기에 자동으로 모입니다.
@@ -243,9 +245,10 @@ export const OrderSummaryView: React.FC<OrderSummaryViewProps> = ({
           <button
             onClick={onOpenShareModal}
             type="button"
-            className="h-8 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0 shadow-2xs active:scale-95 transition-all cursor-pointer"
+            className="h-8.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shrink-0 shadow-2xs active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
           >
-            링크 만들기
+            <Share2 className="w-3.5 h-3.5" />
+            <span>주문하기 링크 공유</span>
           </button>
         </div>
       )}
@@ -267,10 +270,10 @@ export const OrderSummaryView: React.FC<OrderSummaryViewProps> = ({
             <button
               onClick={onOpenShareModal}
               type="button"
-              className="h-9 px-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all shadow-xs cursor-pointer"
+              className="h-9 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black flex items-center gap-1.5 active:scale-95 transition-all shadow-xs cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>링크 공유</span>
+              <span>주문하기 링크 공유</span>
             </button>
 
             <button
@@ -737,25 +740,36 @@ export const OrderSummaryView: React.FC<OrderSummaryViewProps> = ({
 
       {/* Sticky Bottom Actions */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-stone-100 via-stone-100/90 to-transparent">
-        <div className="max-w-md mx-auto flex gap-2.5">
+        <div className="max-w-md mx-auto flex flex-col gap-2">
           <button
-            onClick={onGoBackToMenu}
+            onClick={onOpenShareModal}
             type="button"
-            className="w-1/3 h-13 rounded-2xl bg-white border border-stone-300 text-stone-700 font-bold text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-stone-50 active:scale-[0.98] transition-all cursor-pointer"
+            className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] transition-all cursor-pointer"
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>메뉴 추가</span>
+            <Share2 className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>카톡 단톡방에 주문하기 링크 공유</span>
           </button>
 
-          <button
-            onClick={onGoToDutchPay}
-            disabled={items.length === 0}
-            type="button"
-            className="flex-1 h-13 rounded-2xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all cursor-pointer"
-          >
-            <span>더치페이 계산하기</span>
-            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={onGoBackToMenu}
+              type="button"
+              className="w-1/3 h-12 rounded-xl bg-white border border-stone-300 text-stone-700 font-bold text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-stone-50 active:scale-[0.98] transition-all cursor-pointer"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>메뉴 추가</span>
+            </button>
+
+            <button
+              onClick={onGoToDutchPay}
+              disabled={items.length === 0}
+              type="button"
+              className="flex-1 h-12 rounded-xl bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] transition-all cursor-pointer"
+            >
+              <span>더치페이 계산하기</span>
+              <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            </button>
+          </div>
         </div>
       </div>
 
