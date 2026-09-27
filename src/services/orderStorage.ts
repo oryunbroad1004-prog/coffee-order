@@ -2,7 +2,7 @@ import { Order, Menu, DutchPaySplitResult, MenuRestriction } from '../types';
 import { INITIAL_MENUS } from '../data/menus';
 
 const ORDERS_KEY = 'coffee_order_history_v1';
-const MENUS_KEY = 'coffee_order_menus_v1';
+const MENUS_KEY = 'coffee_order_menus_v3';
 const CUSTOM_CAFES_KEY = 'coffee_order_custom_cafes_v1';
 const SAVED_ACCOUNT_KEY = 'coffee_order_saved_account_v1';
 const DEFAULT_CAFE_ID_KEY = 'coffee_order_default_cafe_id_v1';
